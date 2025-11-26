@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Marriage Proposal</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Romantic page-specific styles */
+    .hero {
+      position:relative;
+      padding:36px 18px;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,111,158,0.02));
+      box-shadow: 0 18px 40px rgba(196,42,114,0.06);
+      overflow:visible;
+    }
+
+    .hero .hearts {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .heart {
+      position:absolute;
+      font-size:20px;
+      opacity:.9;
+      transform-origin:center;
+      animation: floatUp 6s linear infinite;
+      filter:drop-shadow(0 6px 18px rgba(196,42,114,0.08));
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(10vh) scale(.9); opacity:0; }
+      10% { opacity:1; }
+      50% { transform: translateY(-8vh) scale(1.08); }
+      100% { transform: translateY(-40vh) scale(.95); opacity:0; }
+    }
+
+    .title {
+      font-size:2.1rem;
+      margin:0 0 8px 0;
+      letter-spacing:0.6px;
+      color:var(--dark);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      animation: pulseTitle 2000ms infinite;
+    }
+    @keyframes pulseTitle {
+      0% { transform: scale(1); text-shadow: 0 6px 20px rgba(196,42,114,0.02); }
+      50% { transform: scale(1.02); text-shadow: 0 18px 40px rgba(196,42,114,0.06); }
+      100% { transform: scale(1); }
+    }
+
+    .subtitle {
+      margin:6px 0 14px 0;
+      color:rgba(67,51,76,0.82);
+      text-align:center;
+      font-size:1rem;
+    }
+
+    .hero-actions .btn.primary {
+      font-weight:700;
+      padding:12px 20px;
+      font-size:1rem;
+    }
+
+    .romantic-note {
+      margin-top:12px;
+      text-align:center;
+      font-size:0.95rem;
+      color:rgba(67,51,76,0.8);
+    }
+
+    /* small sparkle near start button */
+    .sparkle {
+      display:inline-block;
+      margin-left:8px;
+      transform-origin:center;
+      animation: sparkle 1200ms infinite;
+    }
+    @keyframes sparkle {
+      0% { transform: rotate(0) scale(.96); opacity:.9 }
+      50% { transform: rotate(18deg) scale(1.08); opacity:1 }
+      100% { transform: rotate(0) scale(.96); opacity:.9 }
+    }
+
+    /* responsive tweaks */
+    @media (max-width:520px) {
+      .title { font-size:1.5rem }
+      .heart { font-size:18px }
+    }
+
+    /* Question card styles */
+    .question-card {
+      margin-top: 24px;
+      padding: 18px;
+      border: 2px solid rgba(196,42,114,0.3);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .qc-title {
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+    .qc-text {
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+      color: rgba(67,51,76,0.85);
+    }
+    .qc-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    #question-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid rgba(196,42,114,0.3);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 200ms;
+    }
+    #question-input:focus {
+      border-color: rgba(196,42,114,0.6);
+    }
+    #question-submit {
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+    }
+    #qc-hint {
+      font-size: 0.9rem;
+      color: rgba(67,51,76,0.6);
+      margin-top: -8px;
+      margin-bottom: 12px;
+    }
+
+    /* envelope lock styles */
+    .envelope-lock {
+      text-align: center;
+      margin-top: 16px;
+    }
+    .lock-text {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: rgba(67,51,76,0.85);
+    }
+    .lock-controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    #envelope-key-input {
+      flex: 1;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid rgba(196,42,114,0.3);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 200ms;
+    }
+    #envelope-key-input:focus {
+      border-color: rgba(196,42,114,0.6);
+    }
+    #envelope-unlock-btn {
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+    }
+    .lock-hint {
+      font-size: 0.9rem;
+      color: rgba(67,51,76,0.6);
+      margin-top: -8px;
+    }
+
+    /* Modal styles */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .modal-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 10;
+    }
+    .modal-card {
+      position: relative;
+      padding: 24px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      z-index: 20;
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal h3 {
+      margin: 0 0 16px 0;
+      font-size: 1.25rem;
+      color: var(--dark);
+    }
+    .modal input {
+      width: 100%;
+      padding: 10px;
+      font-size: 1rem;
+      border: 2px solid rgba(196,42,114,0.3);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 200ms;
+      margin-bottom: 12px;
+    }
+    .modal input:focus {
+      border-color: rgba(196,42,114,0.6);
+    }
+    .modal .btn {
+      padding: 10px 16px;
+      font-size: 1rem;
+      border-radius: 8px;
+    }
+    .modal-hint {
+      font-size: 0.9rem;
+      color: rgba(67,51,76,0.6);
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* Celebration modal styles */
+    .celebration-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      overflow: hidden;
+    }
+    .celebration-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 10;
+    }
+    .celebration-card {
+      position: relative;
+      padding: 24px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      z-index: 20;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+    }
+    .celebration-title {
+      margin: 0 0 12px 0;
+      font-size: 1.5rem;
+      color: var(--dark);
+    }
+    .celebration-sub {
+      margin: 0 0 18px 0;
+      font-size: 1.1rem;
+      color: rgba(67,51,76,0.85);
+    }
+    .particles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <header class="hero">
+      <div class="hearts" aria-hidden="true">
+        <!-- floating hearts (will animate) -->
+        <div class="heart" style="left:6%; animation-duration:7s; font-size:22px;">💗</div>
+        <div class="heart" style="left:20%; animation-duration:8s; font-size:18px;">💕</div>
+        <div class="heart" style="left:36%; animation-duration:6.5s; font-size:24px;">💖</div>
+        <div class="heart" style="left:54%; animation-duration:7.5s; font-size:20px;">💝</div>
+        <div class="heart" style="left:72%; animation-duration:9s; font-size:26px;">💘</div>
+        <div class="heart" style="left:88%; animation-duration:8.5s; font-size:18px;">💓</div>
+      </div>
+
+      <h1 class="title">A Special Question <span aria-hidden="true">💞</span></h1>
+      <p class="subtitle">A little love story — click "Start" and follow the envelope ✉️</p>
+
+      <div class="hero-actions" style="display:flex;justify-content:center;gap:12px;">
+        <button id="start-btn" class="btn primary">Start <span class="sparkle">✨</span></button>
+        <button id="preview-btn" class="btn" title="Peek">Peek 👀</button>
+      </div>
+
+      <p class="romantic-note">Tip: Edit the nickname in this file inside the pink name tag before you open the envelope.</p>
+
+      <!-- Question card: appears when Start clicked -->
+      <div id="question-card" class="question-card hidden" aria-hidden="true">
+        <h3 class="qc-title">Ek choti si baat…</h3>
+        <p class="qc-text">Arham ki jawn zara wo name likho mera jo ap kehti hein or mujy sabsy ziada pasand ha</p>
+
+        <div class="qc-inputs">
+          <input id="question-input" type="text" placeholder="Apka jawaab yahan likhain..." aria-label="Answer" />
+          <button id="question-submit" class="btn primary">Send ❤️</button>
+        </div>
+
+        <p id="qc-hint" class="qc-hint">(example answer: "Mera payara baita")</p>
+      </div>
+    </header>
+
+    <section id="envelope-area" class="center hidden">
+      <div class="envelope-outer" aria-hidden="false">
+        <div class="envelope-front" style="font-size:72px;">💌</div>
+
+        <!-- lock / name-protect UI -->
+        <div id="envelope-lock" class="envelope-lock">
+          <p class="lock-text">Is envelope ko kholne ke liye mera name likho</p>
+          <div class="lock-controls">
+            <input id="envelope-key-input" type="text" placeholder="Type the name..." aria-label="Unlock name" />
+            <button id="envelope-unlock-btn" class="btn">Unlock 🔒</button>
+          </div>
+          <small class="lock-hint">Accepted examples: "mera bagrbilla", "my sweet honey", "meri jawn"</small>
+        </div>
+
+        <button id="open-envelope" class="btn reveal" disabled>Open Envelope ❤️</button>
+      </div>
+    </section>
+
+    <section id="letter-area" class="center hidden">
+      <nav class="progress" aria-hidden="false">
+        <span class="step active">1</span>
+        <span class="step">2</span>
+        <span class="step">3</span>
+        <span class="step">4</span>
+      </nav>
+
+      <div class="letter" role="region" aria-label="Proposal letter">
+        <!-- Top nickname removed. Names will be revealed per-page automatically. -->
+        <div class="nickname-edit" style="justify-content:center;">
+          <small style="color:rgba(67,51,76,0.6);margin-right:8px;">Names will be revealed on each page</small>
+        </div>
+
+        <div class="pages">
+          <article class="page active" data-page="1"> 
+            <h2 class="page-title">Page 1 — Hello My Darling</h2>
+            <p class="page-text">Hello <span class="nick-placeholder">______</span> 💕,</p>
+            <p class="page-text">Hanji my sweet heart... This is a thank you message jawna😘❤... Jawna ap ka bohat bohat thanko jo ap naw mera itna khiyal rakh rahi hein bimar hony py mery liya kya kya krti hein sach mein blessed to have you... Bshh kabhi kabhi ulti cheezein zehn mein ajati to ro daita hun😕💋. ... Babeee thankoo so much ap naw mera itna khial rakha ha missing you right now😕💋🫂.</p>
+            <div class="page-actions">
+              <button class="btn reveal-page">Reveal nickname 💖</button>
+              <button class="btn next" disabled>Next ➜</button>
+            </div>
+          </article>
+
+          <article class="page" data-page="2">
+            <h2 class="page-title">Page 2 — Babeee jab ap 70 saal he ki hongi naw tab b itna he payar kron ga jitna ab krta😕💋🫂</h2>
+            <p class="page-text">Ya message apki beauty py😘💋🫂.... Jawna ap bohat matlab bohat beautiful hein apky baal hyeee kya zulfein hein😭💋... Phir apka face chicks to 😕💋🍽️... Then your beautiful lips hyee un py to fida mein😭💋... Ab nechy babeee ajaon kya🤭👉🏻👈🏻... Babeee apki kushbo meko us sy payar ha ap b sochti hongi underarm laga rehta ha bhala odr kya ha paseena he ha😕💋. .. Lakin babeee apki kushboo uski ayeee hyeee meko wo imagine kr ky he rona ajata itna sukoon milta naw odr sab bhool jata😅💋... Or babeee baki sab ki treef to live kron ga raat mein aj hehe🤭💋.. 😘💋🫂</p>
+            <p class="page-text">You are my favorite song, <span class="nick-placeholder">______</span> 🎶.</p>
+            <div class="page-actions">
+              <button class="btn reveal-page">Reveal nickname 💖</button>
+              <button class="btn prev">◀ Previous</button>
+              <button class="btn next" disabled>Next ➜</button>
+            </div>
+          </article>
+
+          <article class="page" data-page="3">
+            <h2 class="page-title">Page 3 — Es mein meri sari tensions hein so rona nai ap naw b😕💋🫂</h2>
+            <p class="page-text">Babeee this message is belong to meri tension🥺💋🫂.... Babeee yrr awi sochein ati hein matlab ky mein kuch nai hun kisi ko kush nai kr paya kabhi🥺💋... Meko lagta ha ap b aik time py tang aa he jayein gi muj sy bachoo ki trh krta apky sath apko irritate krta gussa krta but babeee i love you meri love language ha ya...🥺💋🫂... Kabhi tang nai ana plijj muj sy😭💋.... Ab dekhein czn ki ama phir ayi thi prso kehti mein Ali ko job lagwa deni bank mein safarish kr ky bahir waly uncle sy or itni treefein krti uski phir mery ghar waly baton baton mein sunaty ky wo ya kr gya wo kr gya🙁💋. .. Phir mein sochta ky yrr mein itni try krta hun kya kuch nai kiya mein hr dafa har kam mein fail ho jata matlab mein he wo hun😕💋 ab edr likhon ga kya hun to ap maro gi😕💋. ... Or babeee kabhi kabhi apki sochein ajati ky mein apko btaya howa ky hafty mein aik dafa nai to 10 din mein beth jayein jab sirf hum dono hon koi besti nai apko koi prwa naw ho koi kya kahga but asa not possible hota kheir es topic ko edr he end krta mujy pata ab apko gussa coming huhh mar nai khani mujy apsy hehe😕💋🫂... Esky ilawa lot of tension esky taunt usky taunt jo milty rehty mujy jo hum mily to btaon ga abhi ro dun ga nai toh ap naw bola ha nai rona to control kiya😕💋🫂.... Lubbb juuu😕🫂💋. .. Milny sy yaad aya bolein naw hum kis din off kr rahy hein or mil rahy hein odr he jayein gy nashta krein gy phir ice cream kasa🙁💋. .. Apka kahi or jany ka plan ya khany ka tell me😕💋🫂... Bieee sholly agr kuch galat bola guccchhhha nai krna apka bachaw hun naw😕💋🫂... Or last baat 😕💋. ... KYA AP MERY SATH DATE PY CHALEIN GI MADAM JI🫴🏻. ....</p>
+            <p class="page-text">Always yours, <span class="nick-placeholder">______</span> ✨.</p>
+            <div class="page-actions">
+              <button class="btn reveal-page">Reveal nickname 💖</button>
+              <button class="btn prev">◀ Previous</button>
+              <button class="btn next" disabled>Next ➜</button>
+            </div>
+          </article>
+
+          <article class="page" data-page="4">
+            <h2 class="page-title highlight">Will you marry me?</h2>
+            <p class="page-text">Hy this is last one babzeee my Queen my heart😕💋🫂.... Babeee Will YOU MERRY ME 🫴🏻💋🫂.... Apka khial rakhon ga sary nakhry uthaon ga (karon ga to mein nakhry ap uthayein gi huhhh😕💋.....) My Hunny Bunny💋😕🫂— will you be my forever, <span class="nick-placeholder">______</span>? 💍❤️</p>
+            <div class="page-actions">
+              <button class="btn reveal-page">Reveal nickname 💖</button>
+              <button class="btn prev">◀ Previous</button>
+              <a href="#" class="btn primary final">Say Yes ✨</a>
+            </div>
+          </article>
+        </div>
+      </div>
+
+      <footer class="nav-quick">
+        <button id="back-to-main" class="btn">Back to Main</button>
+      </footer>
+    </section>
+
+    <!-- add nickname unlock modal just before scripts -->
+    <div id="nickname-unlock-modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <h3 id="modal-title">Type the nickname to open this page</h3>
+        <input id="nickname-unlock-input" type="text" placeholder="Type nickname here..." />
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+          <button id="nickname-unlock-submit" class="btn primary">Unlock</button>
+          <button id="nickname-unlock-cancel" class="btn">Cancel</button>
+        </div>
+        <p class="modal-hint">Use the same name you set in the pink name tag.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Celebration modal + particle container -->
+  <div id="celebration-modal" class="celebration-modal hidden" aria-hidden="true" role="dialog" aria-label="Celebration">
+    <div class="celebration-backdrop"></div>
+    <div class="celebration-card">
+      <h2 class="celebration-title">Thank you! 💖</h2>
+      <p class="celebration-sub">You made me the happiest person — love you! 🌹</p>
+      <div class="particles" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
